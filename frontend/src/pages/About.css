@@ -1,0 +1,43 @@
+.about-page { padding: 80px 0 40px; }
+.about-header { max-width: 640px; margin-bottom: 64px; }
+.about-header h1 { font-family: var(--font-display); font-size: clamp(28px,5vw,48px); font-weight: 700; margin: 12px 0 16px; letter-spacing: -0.02em; }
+.about-intro { font-size: 16px; color: var(--text-secondary); line-height: 1.7; }
+
+.about-section { margin-bottom: 64px; }
+.about-section h2 { font-family: var(--font-display); font-size: 24px; font-weight: 700; margin-bottom: 28px; color: var(--text-primary); }
+
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.about-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.about-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; font-family: var(--font-display); }
+.about-card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+.tech-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.tech-item { display: flex; align-items: center; gap: 16px; padding: 18px 20px; border-bottom: 1px solid var(--border); background: var(--bg-card); }
+.tech-item:last-child { border-bottom: none; }
+.tech-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.tech-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.tech-role { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+.arch-diagram {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.arch-box {
+  padding: 14px 20px;
+  border: 1px solid;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  min-width: 130px;
+  text-align: center;
+}
+.arch-label { font-family: var(--font-display); font-size: 14px; font-weight: 700; }
+.arch-sub { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.arch-arrow { font-size: 20px; color: var(--text-muted); }
+
+.section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; }

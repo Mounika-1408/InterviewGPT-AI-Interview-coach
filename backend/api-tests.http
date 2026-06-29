@@ -1,0 +1,47 @@
+### InterviewCoach API — REST Client Tests
+### Install "REST Client" extension in VS Code to run these
+
+@base = http://localhost:8000
+
+### Health Check
+GET {{base}}/health
+
+###
+
+### Get Azure Speech Token
+GET {{base}}/api/speech/token
+
+###
+
+### Evaluate an Answer (test without file upload)
+POST {{base}}/api/interview/evaluate
+Content-Type: application/json
+
+{
+  "question": "Tell me about your experience with Python and FastAPI.",
+  "answer": "I have been working with Python for 3 years. I built RESTful APIs using FastAPI and deployed them on Azure App Service. I also used SQLAlchemy for database interactions.",
+  "job_role": "Backend Developer",
+  "resume_context": "Python developer with 3 years experience in FastAPI, SQLAlchemy, Azure"
+}
+
+###
+
+### Get Interview Summary
+POST {{base}}/api/interview/summary
+Content-Type: application/json
+
+{
+  "job_role": "Backend Developer",
+  "questions_and_answers": [
+    {
+      "question": "Explain how FastAPI handles async requests.",
+      "answer": "FastAPI is built on Starlette and uses Python async/await to handle concurrent requests without blocking the event loop.",
+      "score": 82
+    },
+    {
+      "question": "Describe a challenging project you worked on.",
+      "answer": "I built a real-time notification system using WebSockets and Redis pub/sub for 10,000 concurrent users.",
+      "score": 75
+    }
+  ]
+}
