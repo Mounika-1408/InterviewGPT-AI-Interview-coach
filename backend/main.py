@@ -2,8 +2,8 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
-from routers import interview, speech
-from config import settings
+#from routers import interview, speech
+#from config import settings
 
 app = FastAPI(
     title="InterviewCoach API",
@@ -19,8 +19,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(interview.router, prefix="/api/interview", tags=["Interview"])
-app.include_router(speech.router, prefix="/api/speech", tags=["Speech"])
+#app.include_router(interview.router, prefix="/api/interview", tags=["Interview"])
+#app.include_router(speech.router, prefix="/api/speech", tags=["Speech"])
 
 
 @app.get("/")
