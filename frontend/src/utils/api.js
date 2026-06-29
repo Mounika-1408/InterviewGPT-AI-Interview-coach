@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://interviewgpt-ai-interview-coach-production.up.railway.app',
   timeout: 60000,
 })
 
