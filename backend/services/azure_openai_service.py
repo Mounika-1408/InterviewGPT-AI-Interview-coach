@@ -1,4 +1,5 @@
 import json
+import traceback
 from openai import AzureOpenAI
 from config import settings
 from models.schemas import (
@@ -15,16 +16,26 @@ client = AzureOpenAI(
 )
 
 def chat(messages: list, temperature: float = 0.7) -> str:
-    response = client.chat.completions.create(
-        model=settings.AZURE_OPENAI_DEPLOYMENT,
-        messages=messages,
-        temperature=temperature,
-        max_completion_tokens=2000
-    )
-    return response.choices[0].message.content
+    try:
+        print(f"DEBUG: Calling Azure OpenAI with endpoint: {settings.AZURE_OPENAI_ENDPOINT}")
+        print(f"DEBUG: Using deployment: {settings.AZURE_OPENAI_DEPLOYMENT}")
+        response = client.chat.completions.create(
+            model=settings.AZURE_OPENAI_DEPLOYMENT,
+            messages=messages,
+            temperature=temperature,
+            max_completion_tokens=2000
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print("ERROR: Azure OpenAI chat call failed")
+        print(f"ERROR: {str(e)}")
+        traceback.print_exc()
+        raise
 
 def generate_questions(resume_text: str, job_role: str, num_questions: int) -> GenerateQuestionsResponse:
-    prompt = f"""You are an expert technical interviewer. Based on the resume and job role below, generate {num_questions} interview questions.
+    try:
+        print(f"DEBUG: Starting generate_questions for job_role: {job_role}, num_questions: {num_questions}")
+        prompt = f"""You are an expert technical interviewer. Based on the resume and job role below, generate {num_questions} interview questions.
 
 Job Role: {job_role}
 
@@ -52,23 +63,36 @@ Category must be one of: technical, behavioral, situational
 Difficulty must be one of: easy, medium, hard
 Generate exactly {num_questions} questions."""
 
-    raw = chat([{"role": "user", "content": prompt}], temperature=0.8)
+        print("DEBUG: Calling chat function...")
+        raw = chat([{"role": "user", "content": prompt}], temperature=0.8)
+        print(f"DEBUG: Received raw response from Azure OpenAI (length: {len(raw)})")
 
-    # Strip markdown code fences if present
-    raw = raw.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip().rstrip("```")
+        # Strip markdown code fences if present
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip().rstrip("```")
+        
+        print(f"DEBUG: Cleaned response (length: {len(raw)})")
+        print(f"DEBUG: Response content: {raw[:200]}...")
 
-    data = json.loads(raw)
-    questions = [Question(**q) for q in data["questions"]]
-    return GenerateQuestionsResponse(questions=questions, job_role=job_role)
+        data = json.loads(raw)
+        print(f"DEBUG: Successfully parsed JSON with {len(data.get('questions', []))} questions")
+        questions = [Question(**q) for q in data["questions"]]
+        return GenerateQuestionsResponse(questions=questions, job_role=job_role)
+    except Exception as e:
+        print("ERROR: generate_questions failed")
+        print(f"ERROR: {str(e)}")
+        traceback.print_exc()
+        raise
 
 
 def evaluate_answer(question: str, answer: str, job_role: str, resume_context: str) -> EvaluateAnswerResponse:
-    prompt = f"""You are an expert interview coach evaluating a candidate's answer.
+    try:
+        print(f"DEBUG: Starting evaluate_answer for job_role: {job_role}")
+        prompt = f"""You are an expert interview coach evaluating a candidate's answer.
 
 Job Role: {job_role}
 Resume Context: {resume_context[:500]}
@@ -95,26 +119,37 @@ Return ONLY a valid JSON object:
   "overall_score": <0-100>
 }}"""
 
-    raw = chat([{"role": "user", "content": prompt}], temperature=0.5)
-    raw = raw.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip().rstrip("```")
+        print("DEBUG: Calling chat function for evaluation...")
+        raw = chat([{"role": "user", "content": prompt}], temperature=0.5)
+        print(f"DEBUG: Received evaluation response (length: {len(raw)})")
+        
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip().rstrip("```")
 
-    data = json.loads(raw)
-    feedback = FeedbackDetail(**data["feedback"])
-    return EvaluateAnswerResponse(feedback=feedback, overall_score=data["overall_score"])
+        data = json.loads(raw)
+        print("DEBUG: Successfully parsed evaluation JSON")
+        feedback = FeedbackDetail(**data["feedback"])
+        return EvaluateAnswerResponse(feedback=feedback, overall_score=data["overall_score"])
+    except Exception as e:
+        print("ERROR: evaluate_answer failed")
+        print(f"ERROR: {str(e)}")
+        traceback.print_exc()
+        raise
 
 
 def generate_summary(job_role: str, questions_and_answers: List[dict]) -> InterviewSummaryResponse:
-    qa_text = "\n".join([
-        f"Q: {qa['question']}\nA: {qa['answer']}\nScore: {qa.get('score', 'N/A')}"
-        for qa in questions_and_answers
-    ])
+    try:
+        print(f"DEBUG: Starting generate_summary for job_role: {job_role}")
+        qa_text = "\n".join([
+            f"Q: {qa['question']}\nA: {qa['answer']}\nScore: {qa.get('score', 'N/A')}"
+            for qa in questions_and_answers
+        ])
 
-    prompt = f"""You are an expert interview coach. Summarize this complete interview session.
+        prompt = f"""You are an expert interview coach. Summarize this complete interview session.
 
 Job Role: {job_role}
 
@@ -133,13 +168,23 @@ Return ONLY valid JSON:
   ]
 }}"""
 
-    raw = chat([{"role": "user", "content": prompt}], temperature=0.4)
-    raw = raw.strip()
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip().rstrip("```")
+        print("DEBUG: Calling chat function for summary...")
+        raw = chat([{"role": "user", "content": prompt}], temperature=0.4)
+        print(f"DEBUG: Received summary response (length: {len(raw)})")
+        
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        raw = raw.strip().rstrip("```")
 
-    data = json.loads(raw)
-    return InterviewSummaryResponse(**data)
+        data = json.loads(raw)
+        print("DEBUG: Successfully parsed summary JSON")
+        return InterviewSummaryResponse(**data)
+    except Exception as e:
+        print("ERROR: generate_summary failed")
+        print(f"ERROR: {str(e)}")
+        traceback.print_exc()
+        raise
+
