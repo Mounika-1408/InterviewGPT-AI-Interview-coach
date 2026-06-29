@@ -20,11 +20,12 @@ def chat(messages: list, temperature: float = 0.7) -> str:
         print(f"DEBUG: Calling Azure OpenAI with endpoint: {settings.AZURE_OPENAI_ENDPOINT}")
         print(f"DEBUG: Using deployment: {settings.AZURE_OPENAI_DEPLOYMENT}")
         response = client.chat.completions.create(
-            model=settings.AZURE_OPENAI_DEPLOYMENT,
+            model=DEPLOYMENT_NAME,
             messages=messages,
             temperature=temperature,
-            max_completion_tokens=2000
+            max_tokens=1000
         )
+            
         return response.choices[0].message.content
     except Exception as e:
         print("ERROR: Azure OpenAI chat call failed")
