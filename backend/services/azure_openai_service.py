@@ -23,7 +23,7 @@ def chat(messages: list, temperature: float = 0.7) -> str:
             model=settings.AZURE_OPENAI_DEPLOYMENT,
             messages=messages,
             temperature=temperature,
-            max_completion_tokens=2000
+            max_tokens=2000
         )
         return response.choices[0].message.content
     except Exception as e:
