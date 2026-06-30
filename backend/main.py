@@ -16,7 +16,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://interview-gpt-ai-interview-coach-9z55ydglx.vercel.app/",
+        "https://interview-gpt-ai-interview-coach-56gtdgd6h.vercel.app'",
     ],
     allow_credentials=True,
     allow_methods=["*"],
