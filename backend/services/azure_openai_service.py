@@ -20,7 +20,7 @@ def chat(messages: list, temperature: float = 0.7) -> str:
         print(f"DEBUG: Calling Azure OpenAI with endpoint: {settings.AZURE_OPENAI_ENDPOINT}")
         print(f"DEBUG: Using deployment: {settings.AZURE_OPENAI_DEPLOYMENT}")
         response = client.chat.completions.create(
-            model=DEPLOYMENT_NAME,
+            model=sttings.AZURE_OPENAI_DEPLOYMENT,
             messages=messages,
             temperature=temperature,
             max_tokens=1000
